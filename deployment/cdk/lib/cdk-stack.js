@@ -12,23 +12,24 @@ class CdkStack extends cdk.Stack {
   constructor(scope, id, props) {
     super(scope, id, props);
 
-    const usersTable = new dynamodb.TableV2(this, 'UsersTable', {
+    const goalsTable = new dynamodb.TableV2(this, 'GoalsTable', {
       partitionKey: { name: 'email', type: dynamodb.AttributeType.STRING},
+      sortKey: { name: 'task', type: dynamodb.AttributeType.STRING},
       removalPolicy: cdk.RemovalPolicy.DESTROY,
-      tableName: "UsersTable"
+      tableName: "GoalsTable"
     });
 
-    const usersServiceLambda = new NodejsFunction(this, 'UsersLambda', {
-      entry: '../../lambdas/usersLambda.js',
+    const goalsServiceLambda = new NodejsFunction(this, 'GoalsLambda', {
+      entry: '../../lambdas/goalLambda.js',
       handler: 'handler',
       environment: {
-        TABLE_NAME: usersTable.tableName,
+        TABLE_NAME: goalsTable.tableName,
       },
     })
 
-    const api = new apigateway.LambdaRestApi(this, 'UsersServiceApi', {
-      restApiName: "UsersServiceApi",
-      handler: usersServiceLambda,
+    const api = new apigateway.LambdaRestApi(this, 'GoalsServiceApi', {
+      restApiName: "GoalsServiceApi",
+      handler: goalsServiceLambda,
       defaultCorsPreflightOptions: {
         allowHeaders: [
           'Content-Type',
@@ -42,7 +43,7 @@ class CdkStack extends cdk.Stack {
       }
     })
 
-    usersTable.grantReadWriteData(usersServiceLambda);
+    goalsTable.grantReadWriteData(goalsServiceLambda);
   }
 }
 
