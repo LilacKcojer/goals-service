@@ -14,7 +14,6 @@ class CdkStack extends cdk.Stack {
 
     const goalsTable = new dynamodb.TableV2(this, 'GoalsTable', {
       partitionKey: { name: 'email', type: dynamodb.AttributeType.STRING},
-      sortKey: { name: 'task', type: dynamodb.AttributeType.STRING},
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       tableName: "GoalsTable"
     });
